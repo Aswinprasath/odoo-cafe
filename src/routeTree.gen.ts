@@ -9,12 +9,26 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as KdsRouteImport } from './routes/kds'
+import { Route as CustomerDisplayRouteImport } from './routes/customer-display'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as STokenRouteImport } from './routes/s.$token'
 import { Route as AuthenticatedPosRouteImport } from './routes/_authenticated/pos'
+import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
 import { Route as AuthenticatedPosTableIdRouteImport } from './routes/_authenticated/pos_.$tableId'
 
+const KdsRoute = KdsRouteImport.update({
+  id: '/kds',
+  path: '/kds',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CustomerDisplayRoute = CustomerDisplayRouteImport.update({
+  id: '/customer-display',
+  path: '/customer-display',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -29,9 +43,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const STokenRoute = STokenRouteImport.update({
+  id: '/s/$token',
+  path: '/s/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedPosRoute = AuthenticatedPosRouteImport.update({
   id: '/pos',
   path: '/pos',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedOrdersRoute = AuthenticatedOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedPosTableIdRoute = AuthenticatedPosTableIdRouteImport.update({
@@ -43,13 +67,21 @@ const AuthenticatedPosTableIdRoute = AuthenticatedPosTableIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/customer-display': typeof CustomerDisplayRoute
+  '/kds': typeof KdsRoute
+  '/orders': typeof AuthenticatedOrdersRoute
   '/pos': typeof AuthenticatedPosRoute
+  '/s/$token': typeof STokenRoute
   '/pos/$tableId': typeof AuthenticatedPosTableIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/customer-display': typeof CustomerDisplayRoute
+  '/kds': typeof KdsRoute
+  '/orders': typeof AuthenticatedOrdersRoute
   '/pos': typeof AuthenticatedPosRoute
+  '/s/$token': typeof STokenRoute
   '/pos/$tableId': typeof AuthenticatedPosTableIdRoute
 }
 export interface FileRoutesById {
@@ -57,20 +89,44 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/customer-display': typeof CustomerDisplayRoute
+  '/kds': typeof KdsRoute
+  '/_authenticated/orders': typeof AuthenticatedOrdersRoute
   '/_authenticated/pos': typeof AuthenticatedPosRoute
+  '/s/$token': typeof STokenRoute
   '/_authenticated/pos_/$tableId': typeof AuthenticatedPosTableIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/pos' | '/pos/$tableId'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/customer-display'
+    | '/kds'
+    | '/orders'
+    | '/pos'
+    | '/s/$token'
+    | '/pos/$tableId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/pos' | '/pos/$tableId'
+  to:
+    | '/'
+    | '/auth'
+    | '/customer-display'
+    | '/kds'
+    | '/orders'
+    | '/pos'
+    | '/s/$token'
+    | '/pos/$tableId'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/customer-display'
+    | '/kds'
+    | '/_authenticated/orders'
     | '/_authenticated/pos'
+    | '/s/$token'
     | '/_authenticated/pos_/$tableId'
   fileRoutesById: FileRoutesById
 }
@@ -78,10 +134,27 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  CustomerDisplayRoute: typeof CustomerDisplayRoute
+  KdsRoute: typeof KdsRoute
+  STokenRoute: typeof STokenRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/kds': {
+      id: '/kds'
+      path: '/kds'
+      fullPath: '/kds'
+      preLoaderRoute: typeof KdsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/customer-display': {
+      id: '/customer-display'
+      path: '/customer-display'
+      fullPath: '/customer-display'
+      preLoaderRoute: typeof CustomerDisplayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -103,11 +176,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/s/$token': {
+      id: '/s/$token'
+      path: '/s/$token'
+      fullPath: '/s/$token'
+      preLoaderRoute: typeof STokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/pos': {
       id: '/_authenticated/pos'
       path: '/pos'
       fullPath: '/pos'
       preLoaderRoute: typeof AuthenticatedPosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/orders': {
+      id: '/_authenticated/orders'
+      path: '/orders'
+      fullPath: '/orders'
+      preLoaderRoute: typeof AuthenticatedOrdersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/pos_/$tableId': {
@@ -121,11 +208,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedOrdersRoute: typeof AuthenticatedOrdersRoute
   AuthenticatedPosRoute: typeof AuthenticatedPosRoute
   AuthenticatedPosTableIdRoute: typeof AuthenticatedPosTableIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedOrdersRoute: AuthenticatedOrdersRoute,
   AuthenticatedPosRoute: AuthenticatedPosRoute,
   AuthenticatedPosTableIdRoute: AuthenticatedPosTableIdRoute,
 }
@@ -137,6 +226,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  CustomerDisplayRoute: CustomerDisplayRoute,
+  KdsRoute: KdsRoute,
+  STokenRoute: STokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
