@@ -17,6 +17,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as STokenRouteImport } from './routes/s.$token'
 import { Route as AuthenticatedPosRouteImport } from './routes/_authenticated/pos'
 import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedPosTableIdRouteImport } from './routes/_authenticated/pos_.$tableId'
 
 const KdsRoute = KdsRouteImport.update({
@@ -58,6 +60,16 @@ const AuthenticatedOrdersRoute = AuthenticatedOrdersRouteImport.update({
   path: '/orders',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedPosTableIdRoute = AuthenticatedPosTableIdRouteImport.update({
   id: '/pos_/$tableId',
   path: '/pos/$tableId',
@@ -69,10 +81,12 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/customer-display': typeof CustomerDisplayRoute
   '/kds': typeof KdsRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/orders': typeof AuthenticatedOrdersRoute
   '/pos': typeof AuthenticatedPosRoute
   '/s/$token': typeof STokenRoute
   '/pos/$tableId': typeof AuthenticatedPosTableIdRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -83,6 +97,7 @@ export interface FileRoutesByTo {
   '/pos': typeof AuthenticatedPosRoute
   '/s/$token': typeof STokenRoute
   '/pos/$tableId': typeof AuthenticatedPosTableIdRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -91,10 +106,12 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/customer-display': typeof CustomerDisplayRoute
   '/kds': typeof KdsRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/orders': typeof AuthenticatedOrdersRoute
   '/_authenticated/pos': typeof AuthenticatedPosRoute
   '/s/$token': typeof STokenRoute
   '/_authenticated/pos_/$tableId': typeof AuthenticatedPosTableIdRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -103,10 +120,12 @@ export interface FileRouteTypes {
     | '/auth'
     | '/customer-display'
     | '/kds'
+    | '/admin'
     | '/orders'
     | '/pos'
     | '/s/$token'
     | '/pos/$tableId'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -117,6 +136,7 @@ export interface FileRouteTypes {
     | '/pos'
     | '/s/$token'
     | '/pos/$tableId'
+    | '/admin'
   id:
     | '__root__'
     | '/'
@@ -124,10 +144,12 @@ export interface FileRouteTypes {
     | '/auth'
     | '/customer-display'
     | '/kds'
+    | '/_authenticated/admin'
     | '/_authenticated/orders'
     | '/_authenticated/pos'
     | '/s/$token'
     | '/_authenticated/pos_/$tableId'
+    | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -197,6 +219,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrdersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/pos_/$tableId': {
       id: '/_authenticated/pos_/$tableId'
       path: '/pos/$tableId'
@@ -207,13 +243,26 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedOrdersRoute: typeof AuthenticatedOrdersRoute
   AuthenticatedPosRoute: typeof AuthenticatedPosRoute
   AuthenticatedPosTableIdRoute: typeof AuthenticatedPosTableIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedOrdersRoute: AuthenticatedOrdersRoute,
   AuthenticatedPosRoute: AuthenticatedPosRoute,
   AuthenticatedPosTableIdRoute: AuthenticatedPosTableIdRoute,

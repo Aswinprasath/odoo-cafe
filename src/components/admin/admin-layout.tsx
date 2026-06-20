@@ -2,7 +2,8 @@ import { Link, useLocation, Outlet } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { LayoutDashboard, Package, Tag, Users, MapPin, Grid3x3, TicketPercent, QrCode, Settings as SettingsIcon, UserCog } from "lucide-react";
 
-const NAV = [
+type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean };
+const NAV: NavItem[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/products", label: "Products", icon: Package },
   { to: "/admin/categories", label: "Categories", icon: Tag },
@@ -13,7 +14,7 @@ const NAV = [
   { to: "/admin/employees", label: "Employees", icon: UserCog },
   { to: "/admin/qr", label: "QR Codes", icon: QrCode },
   { to: "/admin/settings", label: "Settings", icon: SettingsIcon },
-] as const;
+];
 
 export function AdminLayout({ children }: { children?: ReactNode }) {
   const loc = useLocation();
