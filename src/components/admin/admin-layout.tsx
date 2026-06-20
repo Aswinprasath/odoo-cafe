@@ -26,7 +26,7 @@ export function AdminLayout({ children }: { children?: ReactNode }) {
           {NAV.map((n) => {
             const active = n.exact ? loc.pathname === n.to : loc.pathname === n.to || loc.pathname.startsWith(n.to + "/");
             return (
-              <Link key={n.to} to={n.to} className={`flex items-center gap-3 rounded-md px-3 py-2 text-xs font-medium transition-colors ${active ? "bg-surface text-foreground" : "text-muted-foreground hover:bg-surface/50 hover:text-foreground"}`}>
+              <Link key={n.to} to={n.to as string} className={`flex items-center gap-3 rounded-md px-3 py-2 text-xs font-medium transition-colors ${active ? "bg-surface text-foreground" : "text-muted-foreground hover:bg-surface/50 hover:text-foreground"}`}>
                 <n.icon className="size-3.5" /> {n.label}
               </Link>
             );
