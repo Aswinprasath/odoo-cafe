@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedPosRouteImport } from './routes/_authenticated/pos'
+import { Route as AuthenticatedPosTableIdRouteImport } from './routes/_authenticated/pos_.$tableId'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -33,16 +34,23 @@ const AuthenticatedPosRoute = AuthenticatedPosRouteImport.update({
   path: '/pos',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPosTableIdRoute = AuthenticatedPosTableIdRouteImport.update({
+  id: '/pos_/$tableId',
+  path: '/pos/$tableId',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/pos': typeof AuthenticatedPosRoute
+  '/pos/$tableId': typeof AuthenticatedPosTableIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/pos': typeof AuthenticatedPosRoute
+  '/pos/$tableId': typeof AuthenticatedPosTableIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -50,13 +58,20 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/pos': typeof AuthenticatedPosRoute
+  '/_authenticated/pos_/$tableId': typeof AuthenticatedPosTableIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/pos'
+  fullPaths: '/' | '/auth' | '/pos' | '/pos/$tableId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/pos'
-  id: '__root__' | '/' | '/_authenticated' | '/auth' | '/_authenticated/pos'
+  to: '/' | '/auth' | '/pos' | '/pos/$tableId'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/pos'
+    | '/_authenticated/pos_/$tableId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -95,15 +110,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/pos_/$tableId': {
+      id: '/_authenticated/pos_/$tableId'
+      path: '/pos/$tableId'
+      fullPath: '/pos/$tableId'
+      preLoaderRoute: typeof AuthenticatedPosTableIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedPosRoute: typeof AuthenticatedPosRoute
+  AuthenticatedPosTableIdRoute: typeof AuthenticatedPosTableIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPosRoute: AuthenticatedPosRoute,
+  AuthenticatedPosTableIdRoute: AuthenticatedPosTableIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
